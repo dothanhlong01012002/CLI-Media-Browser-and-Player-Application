@@ -1,0 +1,19 @@
+@startuml UpdateMediaFileMetadata
+actor User
+entity ViewMetadata
+entity MediaFileController
+entity MediaFile
+entity MetadataController
+
+User -> ViewMetadata: Select media file to update metadata
+ViewMetadata -> MediaFileController: getMediaFileDetails(fileName)
+MediaFileController -> MediaLibrary: getMediaFileByName(fileName)
+MediaLibrary -> MediaFileController: Return MediaFile
+MediaFileController -> ViewMetadata: Show current metadata
+User -> ViewMetadata: Edit metadata fields
+ViewMetadata -> MetadataController: updateMediaFileMetadata(file, newMetadata)
+MetadataController -> MediaFile: setMetadata(newMetadata)
+MediaFile -> MetadataController: Update metadata
+MetadataController -> ViewMetadata: Confirm update
+ViewMetadata -> User: Show updated metadata
+@enduml

@@ -1,0 +1,43 @@
+@startuml MVC
+package Controller {
+    ControllerManager o--> BaseController
+    BaseController --|> MainMenuController
+    BaseController --|> ScanfOptionController
+    BaseController --|> PlaylistController
+    BaseController --|> MediaFileController
+    BaseController --|> PlayingMediaController
+    BaseController --|> DetailedPlaylistController
+    BaseController --|> MetadataController
+    BaseController --|> HardwareController
+}
+
+package Model {
+
+    ModelManager o--> MediaLibrary
+    ModelManager o--> PlaylistLibrary
+    ModelManager o--> PlayingMedia
+    MediaLibrary o--> MediaFile
+    PlaylistLibrary o--> Playlist
+    Playlist o--> MediaFile
+    MediaFile o--> Metadata
+}
+
+package View {
+    MainMenuView --|> BaseView
+    ScanfOptionView --|> BaseView
+    MediaFileView --|> BaseView
+    PlaylistView --|> BaseView
+    DetailedPlaylistView --|> BaseView
+    PlayingMediaView --|> BaseView
+    MetadataView --|> BaseView
+    BaseView <--o ViewManager
+}
+HardwareController o--> UART
+package Hardware {
+    UART "1" --> "1" KL46ZInterface : interfaces with >
+}
+
+ViewManager -- ControllerManager
+ControllerManager -- ModelManager
+
+@enduml

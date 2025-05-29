@@ -1,0 +1,125 @@
+@startuml Controller
+package Controller {
+    !define unique_ptr T
+    !define vector T
+
+    class BaseController {
+        + handleInput(): virtual void
+    }
+
+    class ScanfOptionController {
+        - std::string removeAccents(const std::string& input)
+        + void handleInput()
+        + void scanDirectory(const std::string& folderPath)
+        + void scanUSBDevice(const std::string& device)
+        + void back()
+        + std::shared_ptr<MediaFile> scanfFilePath(const std::string& filePath)
+        + void scanPlaylistsFromTxt(const std::string& filePath)
+        + std::vector<std::string> scanUSB()
+    }
+
+    class PlaylistController {
+        + void handleInput()
+        + void createPlaylist(const std::string& name)
+        + void back()
+        + void deletePlaylist(const std::string& Id)
+        + void showAllPlaylists(const std::vector<std::shared_ptr<Playlist>>& lists)
+    }
+
+    class MediaFileController {
+        - size_t currentPage = 1
+        + void handleInput()
+        + void back()
+        + void displayMediaFilesWithPagination(const std::vector<std::shared_ptr<MediaFile>>& files, size_t pageSize = 25)
+    }
+
+    class PlayingMediaController {
+        - std::thread updateThread
+        - std::atomic<bool> isPlayingMediaFile
+        - std::atomic<bool> isPlayingView
+        - void updateElapsedTime()
+
+        + void handleInput(const std::string& ID)
+        + void playMediaFile(const std::shared_ptr<MediaFile>& file)
+        + void play()
+        + void pause()
+        + void skipToNext()
+        + void skipToPrevious()
+        + void adjustVolume(size_t level)
+        + void updateTime()
+        + void startUpdateThread()
+        + void stopUpdateThread()
+        + void back()
+    }
+
+    class DetailedPlaylistController {
+        + void handleInput(std::string listId)
+        + void addSongToPlaylist(const std::string& PlaylistId, const std::string& songID)
+        + void removeSongFromPlaylist(const std::string& PlaylistId, const std::string& songID)
+        + void back()
+        + void showMediafileInList(const std::string& listId)
+    }
+
+    class MetadataController {
+        + void handleInput(const std::string& ID)
+        + void getMediaFileMetadata(const std::shared_ptr<MediaFile>& file) const
+        + void updateMediaFileMetadata(const std::string& key, const std::string& value, const std::string& ID)
+        + void back()
+        + void handleEditAudio(const std::string& filepath, const std::string& ID)
+        + void handleEditVideo(const std::string& filepath, const std::string& ID)
+    }
+
+    class ControllerManager {
+        - static ControllerManager* instance
+        - vector<unique_ptr<BaseController>> controllers
+        - ViewManager* views
+        - ModelManager* model
+
+        + static ControllerManager* getInstance(ViewManager* viewManager = nullptr, ModelManager* modelManager = nullptr)
+        + MainMenuController* getMainMenuController()
+        + ScanfOptionController* getScanfOptionController()
+        + PlaylistController* getPlaylistController()
+        + MediaFileController* getMediaFileController()
+        + PlayingMediaController* getPlayingMediaController()
+        + DetailedPlaylistController* getDetailedPlaylistController()
+        + MetadataController* getMetadataController()
+        + ViewManager* getViewManager()
+        + ModelManager* getModelManager()
+        + HardwareController* getHardwareController()
+    }
+
+    class MainMenuController {
+        + void handleInput()
+        + void back()
+    }
+
+    class HardwareController {
+        - UART uart
+        - std::thread readThread
+        - std::atomic<bool> running
+
+        - void handleReceivedData(const std::string& data)
+
+        + HardwareController(const std::string& device, int baudRate)
+        + ~HardwareController()
+        + void sendPlayCommand()
+        + void sendPauseCommand()
+        + void sendStopCommand()
+        + void sendSignal(const std::string& signal)
+        + void startReading()
+        + void stopReading()
+    }
+
+    BaseController <|-- ScanfOptionController
+    BaseController <|-- PlaylistController
+    BaseController <|-- MediaFileController
+    BaseController <|-- PlayingMediaController
+    BaseController <|-- DetailedPlaylistController
+    BaseController <|-- MetadataController
+    BaseController <|-- HardwareController
+    BaseController <|-- MainMenuController
+
+    ControllerManager o--> BaseController
+}
+
+@enduml

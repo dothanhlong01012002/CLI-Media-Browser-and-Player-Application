@@ -1,0 +1,13 @@
+name
+./resources/playlists/07 Nhac thien.mp3
+./resources/playlists/08 Nhac thien.mp3
+./resources/playlists/CoViNaoHonViTetNha-TrucNhan-6183655.mp3
+./resources/playlists/DuongVeQue-Jun365-4305037.mp3
+
+trung
+./resources/playlists/08 Nhac thien.mp3
+./resources/playlists/CoViNaoHonViTetNha-TrucNhan-6183655.mp3
+./resources/playlists/DuongVeQue-Jun365-4305037.mp3
+
+long
+./resources/playlists/DuongVeQue-Jun365-4305037.mp3

@@ -1,0 +1,27 @@
+@startuml PlayPauseStopMedia
+actor User
+entity ViewPlay
+entity PlayingMediaController
+entity PlayingMedia
+
+User -> ViewPlay: Request to play media file
+ViewPlay -> PlayingMediaController: playMediaFile(file)
+PlayingMediaController -> PlayingMedia: setCurrentMediaFile(file)
+PlayingMedia -> PlayingMediaController: Set current media file
+PlayingMediaController -> ViewPlay: Confirm play
+ViewPlay -> User: Show media file playing
+
+User -> ViewPlay: Request to pause
+ViewPlay -> PlayingMediaController: pause()
+PlayingMediaController -> PlayingMedia: setIsPlaying(false)
+PlayingMedia -> PlayingMediaController: Pause media
+PlayingMediaController -> ViewPlay: Confirm pause
+ViewPlay -> User: Show media paused
+
+User -> ViewPlay: Request to stop
+ViewPlay -> PlayingMediaController: stop()
+PlayingMediaController -> PlayingMedia: setIsPlaying(false)
+PlayingMedia -> PlayingMediaController: Stop media
+PlayingMediaController -> ViewPlay: Confirm stop
+ViewPlay -> User: Show media stopped
+@enduml

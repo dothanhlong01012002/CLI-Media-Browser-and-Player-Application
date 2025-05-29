@@ -1,0 +1,176 @@
+@startuml Model
+package Model {
+    class MediaFile {
+        - static size_t mediaFileNextID
+        - static std::queue<int> mediaFileFreeIDs
+        - std::string ID
+        - std::string name
+        - std::string path
+        - size_t duration
+        - MediaType type
+        - Metadata metadata
+
+        + MediaFile(const std::string& name = "", const std::string& path = "", MediaType type = AUDIO, const Metadata& metadata = Metadata())
+        + void setName(const std::string& name)
+        + void setPath(const std::string& path)
+        + void setDuration(const size_t& duration)
+        + std::string getName() const
+        + std::string getID() const
+        + size_t getDuration() const
+        + std::string getPath() const
+        + MediaType getType() const
+        + Metadata& getMetadata()
+        + void setMetadata(const Metadata& metadata)
+        + void setType(MediaType type)
+        + ~MediaFile()
+    }
+
+    class Playlist {
+        - static size_t playlistNextID
+        - std::string ID
+        - std::string name
+        - std::vector<std::shared_ptr<MediaFile>> songs
+
+        + Playlist(const std::string& name)
+        + std::string getID() const
+        + std::string getName() const
+        + void setID(const std::string& ID)
+        + const std::vector<std::shared_ptr<MediaFile>>& getSongs() const
+        + void addSong(const std::shared_ptr<MediaFile>& song)
+        + void removeSong(const std::string& ID)
+        + bool isValidMediaFileIDInPlaylist(const std::string& ID)
+        + std::shared_ptr<MediaFile> getSongByID(const std::string& ID) const
+        + ~Playlist()
+    }
+
+    class MediaFileLibrary {
+        - std::vector<std::shared_ptr<MediaFile>> mediaFiles
+
+        + const std::vector<std::shared_ptr<MediaFile>>& getAllMediaFiles() const
+        + void addMediaFile(const std::shared_ptr<MediaFile>& files)
+        + void removeMediaFile(const std::string& ID)
+        + void setAllMediaFiles(const std::vector<std::shared_ptr<MediaFile>>& files)
+        + std::shared_ptr<MediaFile> getMediaFileByID(const std::string& ID) const
+        + std::shared_ptr<MediaFile> getMediaFileByName(const std::string& fileName) const
+        + bool isValidMediaFileIDInLibrary(const std::string& ID)
+        + bool isValidMediaFileNameInLibrary(const std::string& fileName)
+    }
+
+    class PlaylistLibrary {
+        - std::vector<std::shared_ptr<Playlist>> playlists
+
+        + const std::vector<std::shared_ptr<Playlist>>& getAllPlaylists() const
+        + void addPlaylist(const std::shared_ptr<Playlist>& playlist)
+        + void removePlaylist(const std::string& ID)
+        + std::shared_ptr<Playlist> getPlaylistByID(const std::string& ID) const
+        + bool isValidPlaylistIDInLibrary(const std::string& ID)
+        + void saveToFile(const std::string& filePath) const
+    }
+
+    class ModelManager {
+        - std::unique_ptr<MediaFileLibrary> mediaLibrary
+        - std::unique_ptr<PlaylistLibrary> playlistLibrary
+        - std::unique_ptr<PlayingMedia> playingMedia
+
+        + ModelManager()
+        + MediaFileLibrary* getMediaLibrary() const
+        + PlaylistLibrary* getPlaylistLibrary() const
+        + PlayingMedia* getPlayingMedia() const
+    }
+
+    class PlayingMedia {
+        - std::vector<std::shared_ptr<MediaFile>> currentplaylist
+        - int volume
+        - size_t currentTime
+        - size_t totalTime
+        - size_t currentTrackIndex
+        - std::atomic<bool> paused
+        - std::atomic<bool> playing
+        - std::thread playbackThread
+        - std::recursive_mutex stateMutex
+
+        + PlayingMedia()
+        + std::shared_ptr<MediaFile> getCurrentMediaFile() const
+        + void setCurrentMediaFile(const std::shared_ptr<MediaFile>& mediaFile)
+        + size_t& getCurrentTime()
+        + std::string getDurationStringType() const
+        + size_t getTotalTime() const
+        + void setCurrentTime(size_t time)
+        + void playAudio(const char* filePath)
+        + void playVideo(const char* videoFilePath, const char* wavPath)
+        + bool isPlaying()
+        + void play()
+        + void pauseMusic()
+        + void resumeMusic()
+        + void stop()
+        + void nextTrack()
+        + void previousTrack()
+        + bool hasNextTrack() const
+        + bool hasPrevTrack() const
+        + void playCurrentTrack()
+        + void setPlaylist(const std::vector<std::shared_ptr<MediaFile>>& newPlaylist)
+        + void adjustVolume(size_t newVolume)
+        + void setVolume(const int &value)
+        + int& getVolume()
+        + void stopPlaybackThread()
+        + std::string extractAudio(const std::string &videoPath)
+        + ~PlayingMedia()
+    }
+
+    class Metadata {
+        - std::map<std::string, std::string> data
+
+        + std::map<std::string, std::string> getMetadata() const
+        + void setMetadata(const std::map<std::string, std::string>& data)
+        + std::string getValue(const std::string& key) const
+        + void setValue(const std::string& key, const std::string& value)
+    }
+
+    class Device {
+        - volume: int
+        - KL46ZConnection: KL46ZInterface*
+        + setVolume(level: int)
+        + getVolume(): int
+        + updateDisplay(info: string)
+        + handleButtonPress(button: ButtonType)
+    }
+
+    enum ButtonType {
+        PLAY_PAUSE
+        NEXT
+        PREVIOUS
+        STOP
+    }
+
+    Device --> ButtonType : handles >
+
+    enum MediaType {
+        AUDIO
+        VIDEO
+    }
+
+    MediaFile --> "1" MediaType : has type >
+
+    ModelManager --> PlayingMedia
+    ModelManager --> MediaFileLibrary
+    ModelManager --> PlaylistLibrary
+    ModelManager --> Device
+    MediaFileLibrary o--> MediaFile
+    PlaylistLibrary o--> Playlist
+    Playlist o--> MediaFile
+    MediaFile o--> Metadata
+}
+
+package Hardware {
+    class KL46ZInterface {
+        - serialConnection: SerialPort*
+        + connect(): void
+        + disconnect(): void
+        + readADC(): int
+        + readButton(): ButtonState
+        + updateDisplay(text: string): void
+    }
+    Device "1" --> "1" KL46ZInterface : interfaces with >
+}
+
+@enduml

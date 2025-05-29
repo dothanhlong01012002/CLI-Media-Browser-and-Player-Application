@@ -1,0 +1,39 @@
+@startuml AddMediaFileToPlaylist
+actor User
+entity ViewPlaylist
+entity PlaylistController
+entity Playlist
+entity MediaFile
+
+User -> ViewPlaylist: Select Playlist to add song
+ViewPlaylist -> PlaylistController: getAllPlaylists()
+PlaylistController -> PlaylistLibrary: getAllPlaylists()
+PlaylistLibrary -> PlaylistController: Return playlists
+PlaylistController -> ViewPlaylist: Display playlist list
+User -> ViewPlaylist: Select playlist
+ViewPlaylist -> PlaylistController: addMediaFileToPlaylist(playlistName, file)
+PlaylistController -> PlaylistLibrary: getPlaylistByName(playlistName)
+PlaylistLibrary -> PlaylistController: Return playlist
+PlaylistController -> Playlist: addSong(song)
+Playlist -> PlaylistController: Add song to playlist
+PlaylistController -> ViewPlaylist: Confirm addition
+ViewPlaylist -> User: Show song added to playlist
+@enduml
+
+@startuml DeleteMediaFileFromPlaylist
+actor User
+entity ViewDetailedPlaylist
+entity PlaylistController
+entity Playlist
+entity MediaFile
+
+User -> ViewDetailedPlaylist: Request delete media file
+ViewDetailedPlaylist -> User: Show list of media files in playlist
+User -> ViewDetailedPlaylist: Select media file to delete
+ViewDetailedPlaylist -> PlaylistController: removeMediaFileFromPlaylist(playlistName, mediaFile)
+PlaylistController -> Playlist: removeMediaFile(mediaFile)
+Playlist -> PlaylistController: Return updated playlist
+PlaylistController -> ViewDetailedPlaylist: Return updated playlist
+ViewDetailedPlaylist -> User: Display updated playlist without media file
+@enduml
+

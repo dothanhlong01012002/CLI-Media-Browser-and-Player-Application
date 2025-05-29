@@ -1,0 +1,36 @@
+@startuml ScanMediaFilesFromDirectory
+actor User
+entity ViewScanfOption
+entity FileController
+entity MediaLibrary
+entity MediaFile
+
+User -> ViewScanfOption: Request Scanf
+ViewScanfOption -> User: Show scanf menu
+User -> ViewScanfOption: Provide directory path
+ViewScanfOption -> FileController: scanDirectory(path)
+FileController -> MediaLibrary: scanDirectory(path)
+MediaLibrary -> MediaFile: Create MediaFile objects
+MediaLibrary -> FileController: Return MediaFile list
+FileController -> ViewScanfOption: Return MediaFiles list
+ViewScanfOption -> User: Display scanned files
+@enduml
+
+@startuml ScanMediaFilesFromUSB
+actor User
+entity ViewScanfOption
+entity FileController
+entity MediaLibrary
+entity MediaFile
+
+User -> ViewScanfOption: Request Scanf
+ViewScanfOption -> User: Show scanf menu
+User -> ViewScanfOption: Select USB option
+ViewScanfOption -> FileController: scanUSBDevice()
+FileController -> MediaLibrary: scanUSBDevice()
+MediaLibrary -> MediaFile: Create MediaFile objects from USB
+MediaLibrary -> FileController: Return MediaFile list
+FileController -> ViewScanfOption: Return MediaFiles list
+ViewScanfOption -> User: Display scanned files from USB
+@enduml
+

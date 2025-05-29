@@ -1,0 +1,21 @@
+@startuml ViewMediaFile
+actor User
+entity ViewMediaFile
+entity MediaFileController
+entity MediaLibrary
+
+User -> ViewMediaFile: Request to view media files
+ViewMediaFile -> MediaFileController: getAllMediaFiles()
+MediaFileController -> MediaLibrary: getAllMediaFiles()
+MediaLibrary -> MediaFileController: Return media files list
+MediaFileController -> ViewMediaFile: Send media files list
+ViewMediaFile -> ViewMediaFile: Calculate total pages
+ViewMediaFile -> ViewMediaFile: Show media files page (Page 1)
+ViewMediaFile -> User: Display media files page 1
+User -> ViewMediaFile: Request next page
+ViewMediaFile -> ViewMediaFile: Show next page of media files
+ViewMediaFile -> User: Display media files page 2
+User -> ViewMediaFile: Request previous page
+ViewMediaFile -> ViewMediaFile: Show previous page of media files
+ViewMediaFile -> User: Display media files page 1
+@enduml

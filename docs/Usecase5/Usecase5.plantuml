@@ -1,0 +1,12 @@
+@startuml SwitchView
+actor User
+entity ViewManager
+entity ViewMenu
+entity ViewScanfOption
+
+User -> ViewManager: Request to switch to scan view
+ViewManager -> ViewMenu: hide()
+ViewManager -> ViewScanfOption: show()
+ViewScanfOption -> ViewManager: Display scan view
+ViewManager -> User: Show scan view
+@enduml
